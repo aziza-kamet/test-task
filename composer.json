@@ -1,0 +1,17 @@
+{
+    "name": "aziza/test-task",
+    "authors": [
+        {
+            "name": "Aziza Kamet",
+            "email": "aziza.kamet@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/",
+            "db\\": "db/"
+        }
+    }
+
+}
