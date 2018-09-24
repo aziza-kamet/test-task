@@ -46,6 +46,11 @@ class Promotion
         return self::STATUS_VALUES[$status];
     }
 
+    public static function list()
+    {
+        return MySqlDatabase::selectAll(self::$table, self::class);
+    }
+
     public static function selectRandom()
     {
         return MySqlDatabase::selectRandom(self::$table, self::class);

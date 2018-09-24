@@ -93,6 +93,12 @@ class MySqlDatabase implements Database
         self::executeStatement(sprintf('TRUNCATE TABLE %s', $table));
     }
 
+    public static function selectAll($table, $className)
+    {
+        $statement = self::executeStatement(sprintf('SELECT * FROM %s', $table));
+        return $statement->fetchAll(PDO::FETCH_CLASS, $className);
+    }
+
     public static function selectRandom($table, $className)
     {
         $statement = self::executeStatement(sprintf(
