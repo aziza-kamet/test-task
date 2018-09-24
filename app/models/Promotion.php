@@ -23,7 +23,7 @@ class Promotion
 
     public function save()
     {
-        MySqlDatabase::insert(self::$table, $this->columnMap());
+        MySqlDatabase::insertOrUpdate(self::$table, $this->columnMap());
     }
 
     public function columnMap()
@@ -31,23 +31,34 @@ class Promotion
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'start_date' => strtotime($this->startDate),
-            'end_date' => strtotime($this->endDate),
-            'status' => $this->statusValue(),
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+            'status' => $this->status,
         ];
     }
 
-    public function statusValue()
+    public function statusValue($status)
     {
-        if (!array_key_exists($this->status, self::STATUS_VALUES)) {
+        if (!array_key_exists($status, self::STATUS_VALUES)) {
             return false;
         }
 
-        return self::STATUS_VALUES[$this->status];
+        return self::STATUS_VALUES[$status];
+    }
+
+    public static function selectRandom()
+    {
+        return MySqlDatabase::selectRandom(self::$table, self::class);
     }
 
     public static function truncate()
     {
         MySqlDatabase::truncateTable(self::$table);
+    }
+
+    public function __set($name, $value)
+    {
+        $propertyName = lcfirst(str_replace('_', '', ucwords($name, '_')));
+        $this->$propertyName = $value;
     }
 }

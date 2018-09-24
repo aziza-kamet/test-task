@@ -22,6 +22,7 @@ class MySqlDatabase implements Database
         self::$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     }
 
+//    TODO have no idea how to refactor
     public static function createTable()
     {
         $isOk = false;
@@ -50,28 +51,64 @@ class MySqlDatabase implements Database
         ];
     }
 
-    public static function insert($table, $map)
+    public static function insertOrUpdate($table, $map)
     {
-        try {
-            $sql = sprintf(
-                'INSERT INTO %s (%s) VALUES (%s)',
-                $table,
-                implode(', ', array_keys($map)),
-                ':' . implode(', :', array_keys($map))
-            );
-            $statement = self::$pdo->prepare($sql);
-            $statement->execute($map);
-        } catch (\Exception $e) {
-            die(var_dump($e->getMessage()));
-        }
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $table,
+            implode(', ', array_keys($map)),
+            ':' . implode(', :', array_keys($map))
+        );
+
+        $updateMap = array_reduce(
+            array_keys($map),
+            function ($array, $key) use ($map) {
+                $array[sprintf('update_%s', $key)] = $map[$key];
+                return $array;
+            }, []
+        );
+        $valuesMap = array_map(function ($key, $updateKey) {
+            return sprintf('%s = :%s', $key, $updateKey);
+        }, array_keys($map), array_keys($updateMap));
+
+        $valuesString = implode(', ', $valuesMap);
+        $sql = sprintf('%s ON DUPLICATE KEY UPDATE %s', $sql, $valuesString);
+        $map = array_merge($map, $updateMap);
+
+        self::executeStatement($sql, $map);
+    }
+
+    public static function update($table, $id, $map)
+    {
+        self::executeStatement(sprintf(
+            'UPDATE %s (%s) VALUES (%s) WHERE id = :id',
+            $table,
+            implode(', ', array_keys($map)),
+            ':' . implode(', :', array_keys($map))
+        ), array_merge($map, ['id' => $id]));
     }
 
     public static function truncateTable($table)
     {
+        self::executeStatement(sprintf('TRUNCATE TABLE %s', $table));
+    }
+
+    public static function selectRandom($table, $className)
+    {
+        $statement = self::executeStatement(sprintf(
+            'SELECT * FROM %s ORDER BY RAND() LIMIT 1',
+            $table
+        ));
+
+        return $statement->fetchObject($className);
+    }
+
+    private static function executeStatement($sql, $params = null)
+    {
         try {
-            $sql = sprintf('TRUNCATE TABLE %s', $table);
             $statement = self::$pdo->prepare($sql);
-            $statement->execute();
+            $statement->execute($params);
+            return $statement;
         } catch (\Exception $e) {
             var_dump($e->getMessage());
         }
