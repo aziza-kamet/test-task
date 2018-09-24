@@ -4,7 +4,7 @@ namespace app\helpers;
 
 use app\models\Promotion;
 
-class CSVExport
+class CsvExport
 {
     private const FILE_PATH = 'web/files/test.csv';
     private const COLUMN_NAME = 'ID акции';
