@@ -1,8 +1,10 @@
 <?php
 
-
+session_start();
+session_unset();
 \db\MySqlDatabase::init();
+
 $result = \db\MySqlDatabase::createTable();
 if (!$result['success']) {
-    echo sprintf('<p>%s</p>', $result['msg']);
+    $_SESSION['error'] = $result['msg'];
 }

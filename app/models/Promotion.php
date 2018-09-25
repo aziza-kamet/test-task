@@ -2,6 +2,7 @@
 namespace app\models;
 
 
+use app\helpers\UrlGenerator;
 use db\MySqlDatabase;
 
 class Promotion
@@ -44,6 +45,11 @@ class Promotion
         }
 
         return self::STATUS_VALUES[$status];
+    }
+
+    function generateUrl()
+    {
+        return UrlGenerator::generate($this->id, $this->name);
     }
 
     public static function list()
