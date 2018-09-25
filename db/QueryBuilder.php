@@ -5,18 +5,17 @@ namespace db;
 use PDO;
 
 /**
- * Class MySqlDatabase
+ * Class QueryBuilder
  * @package db
  */
 
-class MySqlDatabase implements Database
+class QueryBuilder implements Database
 {
     /** @var \PDO pdo */
     private static $pdo;
 
-    public static function init()
+    public static function init(Driver $driver)
     {
-        $driver = new MySQLDriver();
         self::$pdo = $driver->connect();
         self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         self::$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);

@@ -2,9 +2,9 @@
 
 session_start();
 session_unset();
-\db\MySqlDatabase::init();
+\db\QueryBuilder::init(new \db\MySQLDriver());
 
-$result = \db\MySqlDatabase::createTable();
+$result = \db\QueryBuilder::createTable();
 if (!$result['success']) {
     $_SESSION['error'] = $result['msg'];
 }

@@ -3,7 +3,7 @@ namespace app\models;
 
 
 use app\helpers\UrlGenerator;
-use db\MySqlDatabase;
+use db\QueryBuilder;
 
 class Promotion
 {
@@ -24,7 +24,7 @@ class Promotion
 
     public function save()
     {
-        MySqlDatabase::insertOrUpdate(self::$table, $this->columnMap());
+        QueryBuilder::insertOrUpdate(self::$table, $this->columnMap());
     }
 
     public function columnMap()
@@ -54,17 +54,17 @@ class Promotion
 
     public static function list()
     {
-        return MySqlDatabase::selectAll(self::$table, self::class);
+        return QueryBuilder::selectAll(self::$table, self::class);
     }
 
     public static function selectRandom()
     {
-        return MySqlDatabase::selectRandom(self::$table, self::class);
+        return QueryBuilder::selectRandom(self::$table, self::class);
     }
 
     public static function truncate()
     {
-        MySqlDatabase::truncateTable(self::$table);
+        QueryBuilder::truncateTable(self::$table);
     }
 
     public function __set($name, $value)
