@@ -3,7 +3,6 @@ namespace app\controllers;
 
 
 use app\helpers\CsvExport;
-use app\helpers\UrlGenerator;
 use app\models\Promotion;
 
 class PromotionController
