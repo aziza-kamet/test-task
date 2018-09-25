@@ -9,7 +9,7 @@ use PDO;
  * @package db
  */
 
-class QueryBuilder implements Database
+class QueryBuilder
 {
     /** @var \PDO pdo */
     private static $pdo;
